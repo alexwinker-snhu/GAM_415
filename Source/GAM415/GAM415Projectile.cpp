@@ -6,6 +6,8 @@
 #include "Components/DecalComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 AGAM415Projectile::AGAM415Projectile() 
 {
@@ -19,12 +21,12 @@ AGAM415Projectile::AGAM415Projectile()
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 
-	ballMesh = CreateDefaultSubobject<UStaticMeshComponent>("Ball Mesh");
+	ballMesh = CreateDefaultSubobject<UStaticMeshComponent>("Ball Mesh"); // creates ball mesh component
 
 	// Set as root component
 	RootComponent = CollisionComp;
 
-	ballMesh->SetupAttachment(CollisionComp);
+	ballMesh->SetupAttachment(CollisionComp); // sets up collision on ball mesh
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
@@ -42,11 +44,11 @@ void AGAM415Projectile::BeginPlay()
 {
 	Super::BeginPlay();
 	randColor = FLinearColor(UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), 1.f);
-
-	dmiMat = UMaterialInstanceDynamic::Create(projMat, this);
-	ballMesh->SetMaterial(0, dmiMat);
+	//create rand color
+	dmiMat = UMaterialInstanceDynamic::Create(projMat, this); // create dynamic material instance
+	ballMesh->SetMaterial(0, dmiMat); // attachs dmi to mesh
 	
-	dmiMat->SetVectorParameterValue("ProjColor", randColor);
+	dmiMat->SetVectorParameterValue("ProjColor", randColor); // sets rand color to projectile
 }
 
 
@@ -62,14 +64,22 @@ void AGAM415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 
 	if (OtherActor != nullptr)
 	{
+		if (colorP)
+		{
+			UNiagaraComponent* particleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(colorP, HitComp, NAME_None, FVector(-20.f, 0.f, 0.f), FRotator(0.f), EAttachLocation::KeepRelativeOffset, true);
+			particleComp->SetNiagaraVariableLinearColor(FString("RandomColor"), randColor);
+			ballMesh->DestroyComponent();
+			CollisionComp->BodyInstance.SetCollisionProfileName("NoCollision");
+		}
 
-		float frameNum = UKismetMathLibrary::RandomFloatInRange(0.f, 3.f);
+		float frameNum = UKismetMathLibrary::RandomFloatInRange(0.f, 3.f); // creates frame number
 
 		auto Decal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), baseMat, FVector(UKismetMathLibrary::RandomFloatInRange(20.f, 40.f)), Hit.Location, Hit.Normal.Rotation(), 0.f);
-		auto MatInstance = Decal->CreateDynamicMaterialInstance();
+		//creates decal
+		auto MatInstance = Decal->CreateDynamicMaterialInstance();// create material instance
 
-		MatInstance->SetVectorParameterValue("Color", randColor);
-		MatInstance->SetScalarParameterValue("Frame", frameNum);
+		MatInstance->SetVectorParameterValue("Color", randColor);// attachs rand color
+		MatInstance->SetScalarParameterValue("Frame", frameNum);// create frame value
 	}
 
 }

@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class UNiagaraSystem;
 
 UCLASS(config=Game)
 class AGAM415Projectile : public AActor
@@ -23,25 +24,28 @@ class AGAM415Projectile : public AActor
 	UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* ballMesh;
+	UStaticMeshComponent* ballMesh; // creates ball mesh
 
 	UPROPERTY(EditAnywhere)
-	UMaterial* baseMat;
+	UMaterial* baseMat; // this creates base material
 
 	UPROPERTY()
-	FLinearColor randColor;
+	FLinearColor randColor; // rand color
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* projMat; // create projMat
 
 	UPROPERTY()
-	UMaterialInterface* projMat;
+	UMaterialInstanceDynamic* dmiMat; // creates dynamic material instance
 
-	UPROPERTY()
-	UMaterialInstanceDynamic* dmiMat;
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* colorP;
 
 public:
 	AGAM415Projectile();
 
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay(); // inserts begin play
 
 public:
 	/** called when projectile hits something */
