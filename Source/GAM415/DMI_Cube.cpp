@@ -64,10 +64,10 @@ void ADMI_Cube::OnOverLapBegin(UPrimitiveComponent* OverlappedComp, AActor* Othe
 			dmiMat->SetScalarParameterValue("Darkness", ranNumX);
 			
 			if (colorP)
-			{
+			{ 
 				UNiagaraComponent* particleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(colorP, OtherComp, NAME_None, FVector(0.f), FRotator(0.f), EAttachLocation::KeepRelativeOffset, true);
 
-				particleComp->SetNiagaraVariableLinearColor(FString("RandColor"), randColor);
+				particleComp->SetNiagaraVariableLinearColor(FString("RandColor"), randColor); // uses niagara component and attaches it to cube and sets it to a random color
 			}
 			
 		}
