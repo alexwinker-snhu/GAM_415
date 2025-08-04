@@ -7,6 +7,7 @@
 #include "DMI_Cube.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Portal.h"
 
 // Sets default values
 ADMI_Cube::ADMI_Cube()
@@ -74,4 +75,5 @@ void ADMI_Cube::OnOverLapBegin(UPrimitiveComponent* OverlappedComp, AActor* Othe
 
 	}
 }
+
 

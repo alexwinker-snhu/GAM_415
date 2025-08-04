@@ -55,6 +55,11 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
+public:
+
+	UPROPERTY(EditAnywhere)
+	bool isTeleporting;
+
 protected:
 	// APawn interface
 	virtual void NotifyControllerChanged() override;
